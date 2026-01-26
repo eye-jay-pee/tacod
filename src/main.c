@@ -1,3 +1,5 @@
+#define countof(x) (sizeof(x) / sizeof(x[0]))
+
 #define _GNU_SOURCE
 #include <errno.h>
 #include <fcntl.h>
@@ -9,7 +11,18 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-int request_lines(int chip_fd) {
+struct watcher {
+    unsigned int offset;
+    void(*on_rise)(void);
+    void(*on_fall)(void);
+};
+
+int request_lines(int chip_fd, struct watcher* watchers, unsigned watcher_n) {
+    for(unsigned int i = 0; i < watcher_n; i++) {
+        if(watchers[i].on_rise) watchers[i].on_rise();
+        if(watchers[i].on_fall) watchers[i].on_fall();
+    }
+
     struct gpio_v2_line_request req = {
         .offsets = {5, 25},
         .num_lines = 2,
@@ -25,12 +38,12 @@ int request_lines(int chip_fd) {
 
     return req.fd;
 }
+int watch_lines(struct watcher* watchers, unsigned watcher_n) {
 
-int main(void) {
     int chip_fd = open("/dev/gpiochip0", O_RDWR);
     if (chip_fd < 0) return perror("open gpiochip"), -1; 
 
-    int line_fd = request_lines(chip_fd);
+    int line_fd = request_lines(chip_fd, watchers, watcher_n);
     if(line_fd < 0) return perror("request lines"), -1;
 
     int ep = epoll_create1(0);
@@ -56,3 +69,24 @@ int main(void) {
     }
 }
 
+void ignition_on(void) {
+    printf("ignition on\n");
+}
+void ignition_off(void) {
+    printf("ignition off\n");
+}
+void headlights_on(void) {
+    printf("headlights on\n");
+}
+void headlights_off(void) {
+    printf("headlights off\n");
+}
+
+int main(void) {
+    struct watcher watchers[] = {
+        {5, ignition_on, ignition_off},
+        {25, headlights_on, headlights_off},
+    };
+
+    watch_lines(watchers, countof(watchers));
+}
