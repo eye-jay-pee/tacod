@@ -1,22 +1,15 @@
-#define countof(x) (sizeof(x) / sizeof(x[0]))
-
-#define _GNU_SOURCE
-#include <errno.h>
-#include <fcntl.h>
 #include <linux/gpio.h>
-#include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <sys/epoll.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-
+#include <errno.h>
 #include "watcher.h"
-
-
 int request_lines(int chip_fd, struct watcher* watchers, unsigned watcher_n) {
     struct gpio_v2_line_request req = {
-        //.offsets = {5, 25},
         .num_lines = watcher_n,
         .config = {
             .flags = GPIO_V2_LINE_FLAG_INPUT |
@@ -26,12 +19,13 @@ int request_lines(int chip_fd, struct watcher* watchers, unsigned watcher_n) {
     };
     for(unsigned i = 0; i < watcher_n; i++) {
         req.offsets[i] = watchers[i].offset;
+        if(NULL == watchers[i].on_rise || NULL == watchers[i].on_fall) 
+            return perror("invalid funtion pointer"), -1;
     }
 
-    if (ioctl(chip_fd, GPIO_V2_GET_LINE_IOCTL, &req) < 0)
+    if(ioctl(chip_fd, GPIO_V2_GET_LINE_IOCTL, &req) < 0)
         return perror("GET_LINE_IOCTL"), -1;
-
-    return req.fd;
+    else return req.fd;
 }
 int watch_lines(struct watcher* watchers, unsigned watcher_n) {
 
@@ -42,7 +36,7 @@ int watch_lines(struct watcher* watchers, unsigned watcher_n) {
     if(line_fd < 0) return perror("request lines"), -1;
 
     int ep = epoll_create1(0);
-    if (ep < 0) { perror("epoll_create1"); return 1; }
+    if (ep < 0) return perror("epoll_create1"), 1; 
 
     struct epoll_event ev = {
         .events = EPOLLIN,
