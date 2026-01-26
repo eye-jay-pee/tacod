@@ -12,26 +12,24 @@
 #include <unistd.h>
 
 struct watcher {
-    unsigned int offset;
+    unsigned offset;
     void(*on_rise)(void);
     void(*on_fall)(void);
 };
 
 int request_lines(int chip_fd, struct watcher* watchers, unsigned watcher_n) {
-    for(unsigned int i = 0; i < watcher_n; i++) {
-        if(watchers[i].on_rise) watchers[i].on_rise();
-        if(watchers[i].on_fall) watchers[i].on_fall();
-    }
-
     struct gpio_v2_line_request req = {
-        .offsets = {5, 25},
-        .num_lines = 2,
+        //.offsets = {5, 25},
+        .num_lines = watcher_n,
         .config = {
             .flags = GPIO_V2_LINE_FLAG_INPUT |
                      GPIO_V2_LINE_FLAG_EDGE_RISING |
                      GPIO_V2_LINE_FLAG_EDGE_FALLING,
         },
     };
+    for(unsigned i = 0; i < watcher_n; i++) {
+        req.offsets[i] = watchers[i].offset;
+    }
 
     if (ioctl(chip_fd, GPIO_V2_GET_LINE_IOCTL, &req) < 0)
         return perror("GET_LINE_IOCTL"), -1;
@@ -62,10 +60,20 @@ int watch_lines(struct watcher* watchers, unsigned watcher_n) {
         struct gpio_v2_line_event ge;
         read(line_fd, &ge, sizeof(ge));
 
-        printf("line %u %s\n",
-               ge.offset,
-               ge.id == GPIO_V2_LINE_EVENT_RISING_EDGE ? "rising" :
-               ge.id == GPIO_V2_LINE_EVENT_FALLING_EDGE ? "falling" : "unknown");
+        for(unsigned i = 0; i < watcher_n; i++){
+            if(ge.offset == watchers[i].offset){
+                if(ge.id == GPIO_V2_LINE_EVENT_RISING_EDGE) 
+                    watchers[i].on_rise(); 
+                else if(ge.id == GPIO_V2_LINE_EVENT_FALLING_EDGE)
+                    watchers[i].on_fall();
+                break;
+            }
+        }
+
+        // printf("line %u %s\n",
+        //        ge.offset,
+        //        ge.id == GPIO_V2_LINE_EVENT_RISING_EDGE ? "rising" :
+        //        ge.id == GPIO_V2_LINE_EVENT_FALLING_EDGE ? "falling" : "unknown");
     }
 }
 
@@ -84,8 +92,8 @@ void headlights_off(void) {
 
 int main(void) {
     struct watcher watchers[] = {
-        {5, ignition_on, ignition_off},
-        {25, headlights_on, headlights_off},
+        {5, ignition_off, ignition_on},
+        {25, headlights_off, headlights_on},
     };
 
     watch_lines(watchers, countof(watchers));
