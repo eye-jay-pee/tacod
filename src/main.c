@@ -1,25 +1,30 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include "watcher.h"
 #include "brightness.h"
 #include "countof.h"
-void ignition_on(void) {
-    backlight_on();
-    printf("ignition on\n");
+static bool dimmed = false;
+static bool disabled = false;
+void ignition_on_callback(void) {
+    disabled = false;
+    set_brightness(dimmed? 0x01:0xff);
 }
-void ignition_off(void) {
-    backlight_off();
-    printf("ignition off\n");
+void ignition_off_callback(void) {
+    disabled = true;
+    set_brightness(0x00);
 }
-void headlights_on(void) {
-    printf("headlights on\n");
+void headlights_on_callback(void) {
+    dimmed = true;
+    set_brightness(disabled? 0x00:0x01);
 }
-void headlights_off(void) {
-    printf("headlights off\n");
+void headlights_off_callback(void) {
+    dimmed = false;
+    set_brightness(disabled? 0x00:0xff);
 }
 int main(void) {
     struct watcher watchers[] = {
-        {5, ignition_off, ignition_on},
-        {25, headlights_off, headlights_on},
+        { 5,    ignition_off_callback,      ignition_on_callback    },
+        { 25,   headlights_off_callback,    headlights_on_callback  },
     };
-    watch_lines(watchers, countof(watchers));
+    return watch_lines(watchers, countof(watchers));
 }

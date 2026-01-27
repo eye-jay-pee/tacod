@@ -22,7 +22,6 @@ int request_lines(int chip_fd, struct watcher* watchers, unsigned watcher_n) {
         if(NULL == watchers[i].on_rise || NULL == watchers[i].on_fall) 
             return perror("invalid funtion pointer"), -1;
     }
-
     if(ioctl(chip_fd, GPIO_V2_GET_LINE_IOCTL, &req) < 0)
         return perror("GET_LINE_IOCTL"), -1;
     else return req.fd;
@@ -36,7 +35,7 @@ int watch_lines(struct watcher* watchers, unsigned watcher_n) {
     if(line_fd < 0) return perror("request lines"), -1;
 
     int ep = epoll_create1(0);
-    if (ep < 0) return perror("epoll_create1"), 1; 
+    if (ep < 0) return perror("epoll_create1"), -1; 
 
     struct epoll_event ev = {
         .events = EPOLLIN,
@@ -61,5 +60,6 @@ int watch_lines(struct watcher* watchers, unsigned watcher_n) {
             }
         }
     }
+    return -1;
 }
 

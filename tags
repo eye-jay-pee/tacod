@@ -1,0 +1,43 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/ijp/tacod/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	//
+$(OBJ_DIR)/%.o	/home/ijp/tacod/makefile	/^$(OBJ_DIR)\/%.o: $(SRC_DIR)\/%.c$/;"	t
+$(TARGET)	/home/ijp/tacod/makefile	/^$(TARGET): $(OBJ)$/;"	t
+BRIGHTNESS_HEADER	/home/ijp/tacod/src/brightness.h	/^#define BRIGHTNESS_HEADER$/;"	d
+CC	/home/ijp/tacod/makefile	/^CC = gcc$/;"	m
+CFLAGS	/home/ijp/tacod/makefile	/^CFLAGS = -Wall -Wextra -O2$/;"	m
+COUNTOF_HEADER	/home/ijp/tacod/src/countof.h	/^#define COUNTOF_HEADER$/;"	d
+OBJ	/home/ijp/tacod/makefile	/^OBJ = $(patsubst $(SRC_DIR)\/%.c,$(OBJ_DIR)\/%.o,$(SRC))$/;"	m
+OBJ_DIR	/home/ijp/tacod/makefile	/^OBJ_DIR = $(OUT_DIR)\/obj$/;"	m
+OUT_DIR	/home/ijp/tacod/makefile	/^OUT_DIR = build$/;"	m
+ROOT	/home/ijp/tacod/makefile	/^ROOT = $(notdir $(CURDIR))$/;"	m
+SRC	/home/ijp/tacod/makefile	/^SRC = $(wildcard $(SRC_DIR)\/*.c)$/;"	m
+SRC_DIR	/home/ijp/tacod/makefile	/^SRC_DIR = src$/;"	m
+TARGET	/home/ijp/tacod/makefile	/^TARGET = $(OUT_DIR)\/$(ROOT)$/;"	m
+WATCHER_HEADER	/home/ijp/tacod/src/watcher.h	/^#define WATCHER_HEADER$/;"	d
+clean	/home/ijp/tacod/makefile	/^clean:$/;"	t
+compile	/home/ijp/tacod/makefile	/^compile: $(OBJ_DIR)\/%.o$/;"	t
+countof	/home/ijp/tacod/src/countof.h	/^#define countof(/;"	d
+headlights_off	/home/ijp/tacod/src/main.c	/^void headlights_off(void) {$/;"	f	typeref:typename:void
+headlights_on	/home/ijp/tacod/src/main.c	/^void headlights_on(void) {$/;"	f	typeref:typename:void
+help	/home/ijp/tacod/makefile	/^help:$/;"	t
+ignition_off	/home/ijp/tacod/src/main.c	/^void ignition_off(void) {$/;"	f	typeref:typename:void
+ignition_on	/home/ijp/tacod/src/main.c	/^void ignition_on(void) {$/;"	f	typeref:typename:void
+link	/home/ijp/tacod/makefile	/^link: $(TARGET)$/;"	t
+main	/home/ijp/tacod/src/main.c	/^int main(void) {$/;"	f	typeref:typename:int
+offset	/home/ijp/tacod/src/watcher.h	/^    unsigned offset;$/;"	m	struct:watcher	typeref:typename:unsigned
+on_fall	/home/ijp/tacod/src/watcher.h	/^    void(*on_fall)(void);$/;"	m	struct:watcher	typeref:typename:void (*)(void)
+on_rise	/home/ijp/tacod/src/watcher.h	/^    void(*on_rise)(void);$/;"	m	struct:watcher	typeref:typename:void (*)(void)
+request_lines	/home/ijp/tacod/src/watcher.c	/^int request_lines(int chip_fd, struct watcher* watchers, unsigned watcher_n) {$/;"	f	typeref:typename:int
+run	/home/ijp/tacod/makefile	/^run: $(TARGET)$/;"	t
+set_brightness	/home/ijp/tacod/src/brightness.c	/^int set_brightness(unsigned val){$/;"	f	typeref:typename:int
+watch_lines	/home/ijp/tacod/src/watcher.c	/^int watch_lines(struct watcher* watchers, unsigned watcher_n) {$/;"	f	typeref:typename:int
+watcher	/home/ijp/tacod/src/watcher.h	/^struct watcher {$/;"	s
