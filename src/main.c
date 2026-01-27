@@ -3,6 +3,7 @@
 #include "watcher.h"
 #include "brightness.h"
 #include "countof.h"
+#include "bluetooth.h"
 static bool dimmed = false;
 static bool disabled = false;
 void ignition_on_callback(void) {
