@@ -1,5 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O2
+CFLAGS  = -Wall -Wextra -O2 $(shell pkg-config --cflags dbus-1)
+LDFLAGS = $(shell pkg-config --libs dbus-1)
 
 ROOT = $(notdir $(CURDIR))
 SRC_DIR = src
@@ -26,7 +27,7 @@ run: $(TARGET)
 
 link: $(TARGET)
 $(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) -o $@ $^ $(LDFLAGS)
 
 compile: $(OBJ_DIR)/%.o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
